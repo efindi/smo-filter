@@ -42,7 +42,7 @@ public class Filter {
 
     public static Criteria $filterToCriteria(String $filter) throws InvalidODataFormatException {
         if (hasText($filter)) {
-            ImmutableList<String> $filterList = ImmutableList.copyOf(StringUtils.split($filter));
+            ImmutableList<String> $filterList = ImmutableList.copyOf(filterPatternSplitToList($filter));
             if (bridgeIsExclusive(AND.toString(), $filterList)) {
                 return create$andCriteria($filterListToCriteria(filterExpressionBridgeSet($filterList)));
             } else if (bridgeIsExclusive(OR.toString(), $filterList)) {

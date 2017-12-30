@@ -50,13 +50,11 @@ dependencies {
     compile 'org.apache.commons:commons-collections4:4.1'
     compile 'com.google.guava:guava:23.4-jre'
 
+    testCompile('commons-io:commons-io:2.6')
+
     // JUnit Jupiter API and TestEngine implementation
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-
-    // If you also want to support JUnit 3 and JUnit 4 tests
-    testCompile("junit:junit:${junit4Version}")
-    testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 
     // To avoid compiler warnings about @API annotations in JUnit code
     testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
@@ -70,16 +68,13 @@ dependencies {
 }
 
 String[] packageArr = ['com', 'efindi', 'smo']
-String manifestName = StringUtils.join(packageArr, '/').concat('/')
-String manifestImplementationTitle = StringUtils.join(packageArr, '.')
-
 jar {
     manifest {
-        attributes "Name" : manifestName,
+        attributes "Name" : StringUtils.join(packageArr, '/').concat('/'),
                 "Specification-Title": 'Spring MongoDB OData Filter',
                 "Specification-Version": "4.0",
                 "Specification-Vendor": pomGroupId,
-                "Implementation-Title": manifestImplementationTitle,
+                "Implementation-Title": StringUtils.join(packageArr, '.'),
                 "Implementation-Version": pomVersion,
                 "Implementation-Vendor": pomGroupId,
                 'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
@@ -95,6 +90,10 @@ task javadocJar(type: Jar) {
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
 signing {

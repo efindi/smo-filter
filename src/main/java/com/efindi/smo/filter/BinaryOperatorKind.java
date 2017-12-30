@@ -37,22 +37,22 @@ public enum BinaryOperatorKind {
 //    SUB("sub"),
 
     /**
-     * Greater than operator (">")
+     * Greater than operator ("{@literal >}")
      */
     GT("gt"),
 
     /**
-     * Greater than or equals (">=") operator
+     * Greater than or equals ("{@literal >=}") operator
      */
     GE("ge"),
 
     /**
-     * Lesser than operator ("<")
+     * Lesser than operator ("{@literal <}")
      */
     LT("lt"),
 
     /**
-     * Lesser operator or equals ("<=") operator
+     * Lesser operator or equals ("{@literal <=}") operator
      */
     LE("le"),
 

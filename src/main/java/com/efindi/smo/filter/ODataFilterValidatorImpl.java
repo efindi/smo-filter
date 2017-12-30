@@ -24,7 +24,7 @@ public class ODataFilterValidatorImpl implements ODataQueryOptionValidator {
     public boolean isValid(String $filter) {
         if (isNull($filter)) return true;
 
-        List<String> $filterList = ImmutableList.copyOf(StringUtils.split($filter));
+        List<String> $filterList = ImmutableList.copyOf(filterPatternSplitToList($filter));
         if (containsAny($filterList, EXPRESSION_BRIDGE_SET))
             return isValidCompoundExpression($filterList);
 
