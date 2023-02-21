@@ -1,0 +1,165 @@
+import org.apache.commons.lang3.StringUtils
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.apache.commons:commons-lang3:3.7'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+    }
+}
+
+ext.junit4Version = '4.12'
+ext.junitVintageVersion = '4.12.2'
+ext.junitPlatformVersion = '1.0.2'
+ext.junitJupiterVersion = '5.0.2'
+ext.log4jVersion = '2.9.0'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group 'com.efindi'
+version '0.0.1-SNAPSHOT'
+String pomName = getName()
+String pomVersion = getVersion()
+String pomGroupId = getGroup()
+String pomRepositoryUrl = 'https://github.com/efindi/odata-spring-mongodb-filter'
+String pomScmUrl = 'https://github.com/efindi/odata-spring-mongodb-filter.git'
+String pomDescription = 'OData Version 4.0 $filter parser for Spring Data MongoDB'
+String pomDeveloperId = getDeveloperProperty('id')
+String pomDeveloperName = getDeveloperProperty('name')
+String pomDeveloperEmail = getDeveloperProperty('email')
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.data:spring-data-mongodb:2.0.2.RELEASE'
+
+    compile 'javax.validation:validation-api:2.0.1.Final'
+
+    compile 'org.apache.commons:commons-lang3:3.7'
+    compile 'org.apache.commons:commons-collections4:4.1'
+    compile 'com.google.guava:guava:23.4-jre'
+
+    testCompile('commons-io:commons-io:2.6')
+
+    // JUnit Jupiter API and TestEngine implementation
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+    // To avoid compiler warnings about @API annotations in JUnit code
+    testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+
+    // To use Log4J's LogManager
+    testRuntime("org.apache.logging.log4j:log4j-core:${log4jVersion}")
+    testRuntime("org.apache.logging.log4j:log4j-jul:${log4jVersion}")
+
+    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
+    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+}
+
+String[] packageArr = ['com', 'efindi', 'smo']
+jar {
+    manifest {
+        attributes "Name" : StringUtils.join(packageArr, '/').concat('/'),
+                "Specification-Title": 'Spring MongoDB OData Filter',
+                "Specification-Version": "4.0",
+                "Specification-Vendor": pomGroupId,
+                "Implementation-Title": StringUtils.join(packageArr, '.'),
+                "Implementation-Version": pomVersion,
+                "Implementation-Vendor": pomGroupId,
+                'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
+                'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}"
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+def getSonatypeProperty(String name) {
+    name = 'sonatype' + name.capitalize()
+    if (project.hasProperty(name)) {
+        return project.getProperties()[name]
+    } else {
+        return ''
+    }
+}
+
+def getDeveloperProperty(String name) {
+    name = 'developer' + name.capitalize()
+    if (project.hasProperty(name)) {
+        return project.getProperties()[name]
+    } else {
+        return ''
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: getSonatypeProperty('username'), password: getSonatypeProperty('password'))
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: getSonatypeProperty('username'), password: getSonatypeProperty('password'))
+            }
+
+            pom.project {
+                name pomName
+                description pomDescription
+                url pomRepositoryUrl
+                version pomVersion
+                groupId pomGroupId
+                artifactId pomName
+                packaging 'jar'
+                scm {
+                    connection pomScmUrl
+                    developerConnection pomScmUrl
+                    url pomScmUrl
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id pomDeveloperId
+                        name pomDeveloperName
+                        email pomDeveloperEmail
+                    }
+                }
+            }
+        }
+    }
+}
