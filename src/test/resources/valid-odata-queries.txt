@@ -3,3 +3,6 @@ Age gt 16
 LastUpdatedDate ge datetime'2017-12-28T21:48:28Z'
 Description eq 'Test this'
 Description eq 'Test this' and LastName eq 'Smith' and Age gt 16 and LastUpdatedDate ge datetime'2017-12-28T21:48:28Z'
+Description eq 'Test this' and Description eq 'test that'
+Description eq 'Test this' or  Description eq 'test that'
+isNoisy eq false and isGreat eq true
