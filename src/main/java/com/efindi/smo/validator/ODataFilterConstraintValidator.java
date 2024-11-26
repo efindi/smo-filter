@@ -1,8 +1,8 @@
 package com.efindi.smo.validator;
 
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class ODataFilterConstraintValidator implements ConstraintValidator<ODataFilter, String> {
 
