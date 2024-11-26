@@ -12,25 +12,27 @@ import static com.efindi.smo.util.ODataStringUtils.extractString;
 import static com.efindi.smo.util.ODataStringUtils.filterPatternSplitToList;
 import static com.efindi.smo.util.ODataStringUtils.isBoolean;
 import static com.efindi.smo.util.ODataStringUtils.isSingleQuoted;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.math.NumberUtils.createNumber;
-import static org.springframework.util.StringUtils.hasText;
 
 import com.efindi.smo.exception.InvalidODataFormatException;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import lombok.Getter;
 import org.apache.commons.lang3.BooleanUtils;
-import org.bson.Document;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 /**
  * Filter string must be validated by ODataQueryOptionValidator prior to object creation.
  */
+@Getter
 public class Filter {
 
   protected String filter;
@@ -46,8 +48,8 @@ public class Filter {
   }
 
   protected Criteria $filterToCriteria(String $filter) throws InvalidODataFormatException {
-    if (hasText($filter)) {
-      ImmutableList<String> $filterList = ImmutableList.copyOf(filterPatternSplitToList($filter));
+    if (isNotEmpty($filter)) {
+      List<String> $filterList = Collections.unmodifiableList(filterPatternSplitToList($filter));
       if (bridgeIsExclusive(AND.toString(), $filterList)) {
         return create$andCriteria($filterListToCriteria(filterExpressionBridgeSet($filterList)));
       } else if (bridgeIsExclusive(OR.toString(), $filterList)) {
@@ -60,7 +62,7 @@ public class Filter {
   }
 
   protected boolean bridgeIsExclusive(String bridge, List<String> $filterList) {
-    final HashSet<String> rest = Sets.newHashSet(EXPRESSION_BRIDGE_SET);
+    final Set<String> rest = new HashSet<>(EXPRESSION_BRIDGE_SET);
     rest.remove(bridge);
     return $filterList.contains(bridge) && $filterList.stream().noneMatch(rest::contains);
   }
@@ -135,19 +137,11 @@ public class Filter {
         storedValue);
   }
 
-  public String getFilter() {
-    return filter;
-  }
-
-  public Criteria getCriteria() {
-    return criteria;
-  }
-
   @Override
   public String toString() {
-    return new Document()
+    return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
         .append("filter", filter)
         .append("criteria", criteria.getCriteriaObject())
-        .toJson();
+        .toString();
   }
 }
