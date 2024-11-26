@@ -6,13 +6,13 @@ OData Version 4.01 $filter parser for Spring Data MongoDB
 <dependency>
     <groupId>com.efindi</groupId>
     <artifactId>smo-filter</artifactId>
-    <version>0.0.2-RELEASE</version>
+    <version>0.0.3-RELEASE</version>
 </dependency>
 ```
 
 ###### Gradle
 ```groovy
-implementation 'com.efindi:smo-filter:0.0.2-RELEASE'
+implementation 'com.efindi:smo-filter:0.0.3-RELEASE'
 ```
 
 ### Usage
@@ -32,7 +32,9 @@ public class RequestObject {
 ```
 
 ### Dependencies
-* Spring Data MongoDB 3.4.x
+* org.springframework.data:spring-data-mongodb:3.4.18
+* jakarta.validation:jakarta.validation-api:2.0.2
+* org.apache.commons:commons-lang3:3.17.0
 
 ## Alpha
 This project is still in early alpha stage. We welcome any collaborator who is interested in working for this project. 
