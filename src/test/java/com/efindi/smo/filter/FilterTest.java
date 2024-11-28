@@ -20,8 +20,7 @@ public class FilterTest {
   @BeforeAll
   public static void init() throws IOException {
     validOdataQueryList = IOUtils.readLines(Objects.requireNonNull(ClassLoader
-            .getSystemResourceAsStream("valid-odata-queries.txt")),
-        Charset.defaultCharset());
+        .getSystemResourceAsStream("valid-odata-queries.txt")), Charset.defaultCharset());
   }
 
   @Test
